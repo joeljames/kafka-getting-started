@@ -76,7 +76,9 @@
         2. bin/kafka-server-start.sh config/server-1.properties
         3. bin/kafka-server-start.sh config/server-2.properties
     5. Create topic 
-        1. bin/kafka-topics.sh --create --topic my-topic-demo --zookeeper localhost:2181 --replication-factor 3 --partitions 3   
+        ```bash
+        bin/kafka-topics.sh --create --topic my-topic-demo --zookeeper localhost:2181 --replication-factor 3 --partitions 3 
+        ```  
     6. Check details about the topic 
         1. bin/kafka-topics.sh --describe —topic my-topic-demo --zookeeper localhost:2181   
         ```bash
@@ -86,4 +88,15 @@
                 Topic: my-topic-demo	Partition: 2	Leader: 2	Replicas: 2,0,1	Isr: 2,0,1
         ```   
     8. Start the consumer 
-        1. bin/kafka-console-consumer.sh  --topic my-topic-demo --bootstrap-server localhost:9092          
+        1. bin/kafka-console-consumer.sh  --topic my-topic-demo --bootstrap-server localhost:9092
+
+
+# Alter a kafka topic
+```bash
+bin/kafka-topics.sh --alter --topic my-big-topic --zookeeper localhost:2181 --partitions 3
+``` 
+
+# Run built in Kafka producer to generate random test messages 
+```bash
+    bin/kafka-producer-perf-test.sh --topic topic-1 --num-records 50 --record-size 1 --throughput 10 --producer-props bootstrap.servers=localhost:9092,localhost:9093,localhost:9094 key.serializer=org.apache.kafka.common.serialization.StringSerializer value.serializer=org.apache.kafka.common.serialization.StringSerializer
+```        
