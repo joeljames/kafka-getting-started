@@ -16,9 +16,9 @@ import static java.lang.Runtime.getRuntime;
 public class KafkaConsumerWithThreads {
     private static final AtomicBoolean shutdownRequested = new AtomicBoolean(false);
     private static final List<String> topics = List.of("big-topic");
+    private static final int noOfWorkerThreads = 2;
 
     public static void main(String[] args) {
-        int noOfWorkerThreads = 3;
         ExecutorService service = Executors.newFixedThreadPool(noOfWorkerThreads);
         IntStream.range(0, noOfWorkerThreads)
                 .forEach(i -> service.execute(getRunnableTask()));
