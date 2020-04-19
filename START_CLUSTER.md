@@ -77,10 +77,10 @@
         3. bin/kafka-server-start.sh config/server-2.properties
     5. Create topic 
         ```bash
-        bin/kafka-topics.sh --create --topic my-topic-demo --zookeeper localhost:2181 --replication-factor 3 --partitions 3 
+        bin/kafka-topics.sh --create --topic my-topic --zookeeper localhost:2181 --replication-factor 3 --partitions 3 
         ```  
     6. Check details about the topic 
-        1. bin/kafka-topics.sh --describe —topic my-topic-demo --zookeeper localhost:2181   
+        1. bin/kafka-topics.sh --describe —topic my-topic --zookeeper localhost:2181   
         ```bash
                 Topic: my-topic-demo	PartitionCount: 3	ReplicationFactor: 3	Configs:
                 Topic: my-topic-demo	Partition: 0	Leader: 0	Replicas: 0,1,2	Isr: 0,1,2

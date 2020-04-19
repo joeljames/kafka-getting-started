@@ -10,12 +10,13 @@ public class KafkaProducerApp {
     public static void main(String[] args) {
         System.out.println("Starting the producer main application");
 
+        // Kafka Producer required properties
+        //bootstrap.servers: Producer uses this to determine the cluster membership, partitions, leaders etc. You dont have to specify all the servers, but it's best practice to specify more than one broker, incase if the specified broker is unavailable the producer will use the next one.
+        //key.serializer: class used for message serialization. This is to optimize the size of the messages not only for network transmission, but for storage and even compression
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9092,localhost:9093,localhost:9094");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-        String topic = "big-topic";
 
         // You can also send to a particular partition along with unix timestamp.
         // Not recommended in high scale env as addition bytes have to be sent over via network.
@@ -24,6 +25,7 @@ public class KafkaProducerApp {
 
 
         try (KafkaProducer<String, String> producer = new KafkaProducer(props)) {
+            String topic = "big-topic";
             int counter = 0;
 
             while (counter <= 100) {
@@ -32,8 +34,8 @@ public class KafkaProducerApp {
                 // topics, partitions and managing brokers on the cluster.
                 // Producer will use this metatdata instance through out it's life cycle and keep it up to date.
 
-                //Data flow through the pipeline
-                // send message ->
+                //Data flow when the send call is invoked
+                // send() ->
                 // serializer ->
                 // partitioner (decides which partition to send the message) (Strategies: direct, round-robin, key-modhash, custom)
                 // record accumulator (Batches the record which are going to be sent to broker, does not send one at a time. Can be configured in producer properties)
@@ -58,9 +60,9 @@ public class KafkaProducerApp {
                 //1) at most once
                 //2) at least once
                 //3) only once
-                String msg = "Message " + counter;
                 //Use key if you want all the messages to go to a single partition
 //                ProducerRecord<String, String> message1 = new ProducerRecord<>(topic, "key", msg);
+                String msg = "Message " + counter;
                 ProducerRecord<String, String> message1 = new ProducerRecord<>(topic, msg);
 
                 producer.send(message1);
