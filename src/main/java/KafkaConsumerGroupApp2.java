@@ -8,6 +8,8 @@ import java.util.Properties;
 
 @Slf4j
 public class KafkaConsumerGroupApp2 {
+    private static final List<String> topics = List.of("big-topic");
+
     public static void main(String[] args) {
         System.out.println("Starting KafkaConsumerGroupApp2");
 
@@ -18,7 +20,6 @@ public class KafkaConsumerGroupApp2 {
         props.put("group.id", "test-group");
 
         try (KafkaConsumer consumer = new KafkaConsumer(props)) {
-            List<String> topics = List.of("big-topic");
             consumer.subscribe(topics);
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(10);

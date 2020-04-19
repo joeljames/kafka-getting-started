@@ -6,6 +6,7 @@ import java.util.Properties;
 
 @Slf4j
 public class KafkaProducerApp {
+    private static final String topic = "big-topic";
 
     public static void main(String[] args) {
         System.out.println("Starting the producer main application");
@@ -25,7 +26,6 @@ public class KafkaProducerApp {
 
 
         try (KafkaProducer<String, String> producer = new KafkaProducer(props)) {
-            String topic = "big-topic";
             int counter = 0;
 
             while (counter <= 100) {
