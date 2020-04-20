@@ -6,7 +6,7 @@ import java.util.Properties;
 
 @Slf4j
 public class KafkaProducerApp {
-    private static final String topic = "big-topic";
+    private static final String topic = "my-topic";
 
     public static void main(String[] args) {
         System.out.println("Starting the producer main application");

@@ -15,7 +15,7 @@ import static java.lang.Runtime.getRuntime;
 @Slf4j
 public class KafkaConsumerWithThreads {
     private static final AtomicBoolean shutdownRequested = new AtomicBoolean(false);
-    private static final List<String> topics = List.of("big-topic");
+    private static final List<String> topics = List.of("my-topic");
     private static final int noOfWorkerThreads = 3;
 
     public static void main(String[] args) {
