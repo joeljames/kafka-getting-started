@@ -60,7 +60,7 @@ public class KafkaProducerApp {
                 //1) at most once
                 //2) at least once
                 //3) only once
-                //Use key if you want all the messages to go to a single partition
+                //Use key if you want all the messages to go to a single partition (This will ensure ordering of data)
 //                ProducerRecord<String, String> message1 = new ProducerRecord<>(topic, "key", msg);
                 String msg = "Message " + counter;
                 ProducerRecord<String, String> message1 = new ProducerRecord<>(topic, msg);

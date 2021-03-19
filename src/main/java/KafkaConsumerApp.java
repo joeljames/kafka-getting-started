@@ -8,8 +8,7 @@ import java.util.Properties;
 
 @Slf4j
 public class KafkaConsumerApp {
-    private static final String DEMO_TOPIC_1 = "topic-1";
-    private static final String DEMO_TOPIC_2 = "topic-2";
+    private static final List<String> topics = List.of("my-topic");
 
     public static void main(String[] args) {
         System.out.println("Starting the consumer main application");
@@ -27,12 +26,11 @@ public class KafkaConsumerApp {
         //Subscribe call does is it pull messages from multiple topics and multiple partitions
         //Subscribe using regex: consumer.subscribe(List.of("demo-*"));
         try (KafkaConsumer consumer = new KafkaConsumer(props)) {
-            List<String> topics = List.of(DEMO_TOPIC_1, DEMO_TOPIC_2);
             int timeoutMilliSecs = 10;
             consumer.subscribe(topics);
             while (true) {
                 //poll is single threaded
-                // poll -> fetcher -> broker //keeps the tcp connection open until timeout
+                //poll -> fetcher -> broker //keeps the tcp connection open until timeout
                 //fetcher buffers the records -> deserializes it
                 ConsumerRecords<String, String> records = consumer.poll(timeoutMilliSecs);
                 for (ConsumerRecord<String, String> record : records) {
