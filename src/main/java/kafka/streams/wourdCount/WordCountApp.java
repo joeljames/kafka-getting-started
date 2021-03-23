@@ -50,7 +50,8 @@ public class WordCountApp {
         //Read from Kafka stream
         KStream<String, String> wordCountInput = builder.stream("word-count-input");
 
-
+        //KTable new record will be a upsert if values is not null, else delete if values is null
+        //builder.table("word-count-input")
         KTable<String, Long> counts = wordCountInput
                 //mapValues can be used for both KStreams and Ktable. It does not change the key. Does not trigger re-partition
                 .mapValues((ValueMapper<String, String>) String::toLowerCase)
@@ -64,7 +65,7 @@ public class WordCountApp {
                 //Count occurance
                 .count();
 
-        //Write to Kafka streams
+        //To is a terminal operator. Write to a new topic stream.to() or table.to()
         // need to override value serde to Long type
         counts.toStream().to("word-count-output", Produced.with(Serdes.String(), Serdes.Long()));
 
