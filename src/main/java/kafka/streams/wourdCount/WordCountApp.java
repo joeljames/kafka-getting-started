@@ -48,6 +48,9 @@ public class WordCountApp {
         StreamsBuilder builder = new StreamsBuilder();
 
         //Read from Kafka stream
+        //Input: 
+        //Kafka kafka KAFKA
+        //Kafka is my fav
         KStream<String, String> wordCountInput = builder.stream("word-count-input");
 
         //KTable new record will be a upsert if values is not null, else delete if values is null

@@ -15,20 +15,20 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 
 public class BankBalanceExactlyOnceApp {
-    //    Crete the topics
-//    bin/kafka-topics.sh --create --topic bank-transactions --zookeeper localhost:2181 --replication-factor 1 --partitions 1
-//    bin/kafka-topics.sh --create --topic bank-balance-exactly-once --zookeeper localhost:2181 --replication-factor 1 --partitions 1
+    //Crete the topics
+    //bin/kafka-topics.sh --create --topic bank-transactions --zookeeper localhost:2181 --replication-factor 1 --partitions 1
+    //bin/kafka-topics.sh --create --topic bank-balance-exactly-once --zookeeper localhost:2181 --replication-factor 1 --partitions 1
 
-//     View List of topics
-//    bin/kafka-topics.sh --list --zookeeper localhost:2181
+    //View List of topics
+    //bin/kafka-topics.sh --list --zookeeper localhost:2181
 
-//    Start your consumer for bank-transactions
-    //    bin/kafka-console-consumer.sh --topic bank-transactions --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer  --bootstrap-server localhost:9092
+    //Start your consumer for bank-transactions
+    //bin/kafka-console-consumer.sh --topic bank-transactions --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer  --bootstrap-server localhost:9092
 
-//    Now start the BankTransactionProducer (You will see the producer writing to the topic)
+    //Now start the BankTransactionProducer (You will see the producer writing to the topic)
 
-//    Start the consumer for finla topic bank-balance-exactly-once
-    //    bin/kafka-console-consumer.sh --topic bank-balance-exactly-once --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer  --bootstrap-server localhost:9092
+    //Start the consumer for final topic bank-balance-exactly-once
+    //bin/kafka-console-consumer.sh --topic bank-balance-exactly-once --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer  --bootstrap-server localhost:9092
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -65,6 +65,7 @@ public class BankBalanceExactlyOnceApp {
         KStream<String, Transaction> bankTransactions = builder.stream("bank-transactions", Consumed.with(Serdes.String(), transactionSerde));
 
         KTable<String, Balance> bankBalance = bankTransactions
+                //No default key and value serde are defined; hence we need to define groupByKey with Serde
                 .groupByKey(Grouped.with(Serdes.String(), transactionSerde))
                 .aggregate(
                         () -> initialBalance,

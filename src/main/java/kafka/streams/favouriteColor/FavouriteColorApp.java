@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 public class FavouriteColorApp {
-    //    Start the server
+    // Start the server
     // bin/zookeeper-server-start.sh config/zookeeper.properties
     // bin/kafka-server-start.sh config/server-1.properties
     // bin/kafka-server-start.sh config/server-2.properties
@@ -22,33 +22,33 @@ public class FavouriteColorApp {
 
 
     //Problem:
-//    input:
-//    stephan,blue
-//    john,green
-//    stephan,red
-//    alice,red
+    //input:
+    //stephan,blue
+    //john,green
+    //stephan,red
+    //alice,red
 
-//    Crete the topics
-//    input topic:
-//    bin/kafka-topics.sh --create --topic favourite-color-input --zookeeper localhost:2181 --replication-factor 1 --partitions 1
-//    Create intermediate log compact topic (compact topic  is just an optimization, it won't change the result)
-//    bin/kafka-topics.sh --create --topic user-keys-and-colors --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --config cleanup.policy=compact
-//    Create intermediate log compact topic (compact topic  is just an optimization, it won't change the result)
-//    bin/kafka-topics.sh --create --topic favourite-color-output --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --config cleanup.policy=compact
+    //Crete the topics
+    //input topic:
+    //bin/kafka-topics.sh --create --topic favourite-color-input --zookeeper localhost:2181 --replication-factor 1 --partitions 1
+    //Create intermediate log compact topic (compact topic  is just an optimization, it won't change the result)
+    //bin/kafka-topics.sh --create --topic user-keys-and-colors --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --config cleanup.policy=compact
+    //Create intermediate log compact topic (compact topic  is just an optimization, it won't change the result)
+    //bin/kafka-topics.sh --create --topic favourite-color-output --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --config cleanup.policy=compact
 
-//     View List of topics
-//    bin/kafka-topics.sh --list --zookeeper localhost:2181
+    //View List of topics
+    //bin/kafka-topics.sh --list --zookeeper localhost:2181
 
-//    Launch a Kafka consumer
-//    bin/kafka-console-consumer.sh --topic favourite-color-output --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer  --bootstrap-server localhost:9092
+    //Launch a Kafka consumer
+    //bin/kafka-console-consumer.sh --topic favourite-color-output --from-beginning --formatter kafka.tools.DefaultMessageFormatter --property print.key=true --property print.value=true --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer  --bootstrap-server localhost:9092
 
-//    Launch a Kafka Producer to accept in put
-//    bin/kafka-console-producer.sh --broker-list localhost:9092 --topic favourite-color-input
-//    input:
-//    stephan,blue
-//    john,green
-//    stephan,red
-//    alice,red
+    //Launch a Kafka Producer to accept in put
+    //bin/kafka-console-producer.sh --broker-list localhost:9092 --topic favourite-color-input
+    //input:
+    //stephan,blue
+    //john,green
+    //stephan,red
+    //alice,red
 
     public static void main(String[] args) {
         Properties props = new Properties();
@@ -60,11 +60,9 @@ public class FavouriteColorApp {
 
         //Only set this to 0 when doing development. Disable the cache to demonstrate all the steps involved in transformation - dont do it in prod
         props.putIfAbsent(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, "0");
-
         props.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         StreamsBuilder builder = new StreamsBuilder();
-
 
         //Read from Kafka stream
         //input:
@@ -85,12 +83,17 @@ public class FavouriteColorApp {
         usersAndColors.to("user-keys-and-colors");
 
         //Step2: we read the topic as a KTable so that updates are read correctly
+        //This intermediate state will be stored my Kafka as a topic.
+        //eg: favourite-color-application-user-keys-and-colors-STATE-STORE-0000000006-changelog
         KTable<String, String> userAndColorsTable = builder.table("user-keys-and-colors");
 
-        //Step: Count the occurences of the colors
+        //Step: Count the occurrences of the colors
+        //This agg state is stored as a state in Kafka
+        //eg: favourite-color-application-KTABLE-AGGREGATE-STATE-STORE-0000000010-changelog
         KTable<String, Long> favouriteColor = userAndColorsTable
                 //Group by colors and then count. Creating color as the key eg red: 2
-                .groupBy((user, color) -> new KeyValue<>(color, color))
+                //Changing the key causes re-partition
+                .groupBy((userIgnored, color) -> new KeyValue<>(color, color))
                 .count();
 
         favouriteColor.toStream().to("favourite-color-output", Produced.with(Serdes.String(), Serdes.Long()));
