@@ -65,7 +65,10 @@ public class FavouriteColorApp {
 
         StreamsBuilder builder = new StreamsBuilder();
 
+
         //Read from Kafka stream
+        //input:
+        //stephan,blue
         KStream<String, String> textLines = builder.stream("favourite-color-input");
 
         //Step1 : Crate a topic of user keys and colors eg: key=stephan value=red
