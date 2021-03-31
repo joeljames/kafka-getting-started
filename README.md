@@ -118,3 +118,9 @@ bin/kafka-topics.sh --alter --topic my-big-topic --zookeeper localhost:2181 --pa
 ```bash
     bin/kafka-producer-perf-test.sh --topic topic-1 --num-records 50 --record-size 1 --throughput 10 --producer-props bootstrap.servers=localhost:9092,localhost:9093,localhost:9094 key.serializer=org.apache.kafka.common.serialization.StringSerializer value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ```
+
+# Implementing Kafka producers consumers using [kafka-streams framework](https://kafka.apache.org/documentation/streams/)
+In the below example app java file follow the comments to set-up topics, producers, consumers before running the app 
+* [Word Count Example](src/main/java/kafka/streams/wourdCount/WordCountApp.java)
+* [Favourite Color Example](src/main/java/kafka/streams/favouriteColor/FavouriteColorApp.java) 
+* [Bank Balance Example](src/main/java/kafka/streams/bankBalance/BankBalanceExactlyOnceApp.java)
